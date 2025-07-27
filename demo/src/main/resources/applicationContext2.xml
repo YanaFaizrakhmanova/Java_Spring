@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           https://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/context
+           https://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- Автосканируемые пакеты -->
+    <context:component-scan base-package="demo_annotation"/>
+
+    <!-- Регистрация конкретных компонентов -->
+    <bean id="car" class="demo_annotation.Car"/>
+    <bean id="engine" class="demo_annotation.Engine"/>
+    <bean id="suspension" class="demo_annotation.Suspension"/>
+    <bean id="wheel" class="demo_annotation.Wheel"/>
+    <bean id="accumulator" class="demo_annotation.Accumulator"/>
+    <bean id="starter" class="demo_annotation.Starter"/>
+    <bean id="sparkPlug" class="demo_annotation.SparkPlug"/>
+    <bean id="hinge" class="demo_annotation.Hinge"/>
+    <bean id="differential" class="demo_annotation.Differential"/>
+
+</beans>

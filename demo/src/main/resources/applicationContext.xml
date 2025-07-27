@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- Базовые компоненты -->
+    <bean id="wheel" class="com.example.demo_xml.Wheel"/>
+    <bean id="starter" class="com.example.demo_xml.Starter"/>
+    <bean id="sparkPlug" class="com.example.demo_xml.SparkPlug"/>
+    <bean id="accumulator" class="com.example.demo_xml.Accumulator"/>
+    <bean id="hinge" class="com.example.demo_xml.Hinge"/>
+    <bean id="differential" class="com.example.demo_xml.Differential"/>
+
+    <!-- Аграгат двигателя -->
+    <bean id="engine" class="com.example.demo_xml.Engine">
+        <constructor-arg ref="starter"/>
+        <constructor-arg ref="sparkPlug"/>
+    </bean>
+
+    <!-- Подвеска -->
+    <bean id="suspension" class="com.example.demo_xml.Suspension">
+        <constructor-arg ref="hinge"/>
+        <constructor-arg ref="differential"/>
+    </bean>
+
+    <!-- Объект автомобиля -->
+    <bean id="car" class="com.example.demo_xml.Car">
+        <constructor-arg ref="wheel"/>
+        <constructor-arg ref="engine"/>
+        <constructor-arg ref="accumulator"/>
+        <constructor-arg ref="suspension"/>
+    </bean>
+
+</beans>
