@@ -2,8 +2,9 @@ package demo_annotation;
 import org.springframework.beans.factory.annotation.Autowired;
 import demo_annotation.Hinge;
 import demo_annotation.Differential;
+import org.springframework.stereotype.Component;
 
-
+@Component
 public class Suspension {
     private Hinge hinge;
     private Differential differential;
