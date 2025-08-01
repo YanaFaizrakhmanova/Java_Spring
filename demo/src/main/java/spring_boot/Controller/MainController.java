@@ -58,9 +58,10 @@ public class MainController {
     @PostMapping("/app/v1/postRequest")
     public ResponseEntity<String> handlePostRequest(@RequestBody Map<String, Object> requestData) throws IOException {
 
-        // Проверка наличия обязательных полей
-        if (!requestData.containsKey("name") || !requestData.containsKey("surname") || !requestData.containsKey("age")) {
-            return new ResponseEntity<>("Missing required fields in the body.", HttpStatus.INTERNAL_SERVER_ERROR);
+        // Проверка наличия обязательных полей и непустоты фамилий
+        if (!requestData.containsKey("name") || !requestData.containsKey("surname") || !requestData.containsKey("age") ||
+                ((String) requestData.get("surname")).isEmpty()) {
+            return new ResponseEntity<>("Missing or empty required field 'surname'.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         // Извлекаем нужные поля из тела запроса
@@ -68,7 +69,7 @@ public class MainController {
         String surname = (String) requestData.get("surname");
         Integer age = (Integer) requestData.get("age");
 
-        // Расчёт удвоенного возраста
+        // Расчет удвоенного возраста
         Integer doubledAge = age * 2;
 
         // Читаем содержимое файла-шаблона
@@ -76,10 +77,9 @@ public class MainController {
         String templateContent = new String(contentBytes, StandardCharsets.UTF_8);
 
         // Производим нужную замену для Person2.age
-        // Сначала удаляем некорректную конструкцию '{age}*2'
         String modifiedContent = templateContent.replace("\"age\": {age}*2", "\"age\": " + doubledAge);
 
-        // Подменяем оставшиеся места-холдеры ({name}, {surname})
+        // Подменяем остальные места-холдеры
         modifiedContent = modifiedContent
                 .replace("{name}", name)
                 .replace("{surname}", surname)
