@@ -14,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
+import java.lang.Thread;
 
 @RestController
 public class MainController {
@@ -28,11 +29,17 @@ public class MainController {
     @GetMapping("/app/v1/getRequest")
     public ResponseEntity<String> handleGetRequest(
             @RequestParam("id") int id,
-            @RequestParam("name") String name) throws IOException {
+            @RequestParam("name") String name) throws IOException, InterruptedException {
 
         // Проверка условий
         if (id <= 10 || name.length() <= 5) {
             return new ResponseEntity<>("Invalid input parameters.", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        // Добавляем искусственную задержку в зависимости от параметра id
+        if (id > 10 && id < 50) {
+            Thread.sleep(1000); // Задержка 1 секунда
+        } else {
+            Thread.sleep(500); // Задержка 0.5 секунды
         }
 
         // Читаем файл шаблона
@@ -49,32 +56,37 @@ public class MainController {
 
     // Обработчик POST-запроса
     @PostMapping("/app/v1/postRequest")
-    public ResponseEntity<String> handlePostRequest(
-            @RequestBody Map<String, Object> requestData) throws IOException {
+    public ResponseEntity<String> handlePostRequest(@RequestBody Map<String, Object> requestData) throws IOException {
 
         // Проверка наличия обязательных полей
         if (!requestData.containsKey("name") || !requestData.containsKey("surname") || !requestData.containsKey("age")) {
             return new ResponseEntity<>("Missing required fields in the body.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        // Читаем файл postAnswer.txt
-        byte[] contentBytes = Files.readAllBytes(postTemplateResource.getFile().toPath());
-        String templateContent = new String(contentBytes, StandardCharsets.UTF_8);
-
-        // Получить значения из тела запроса
+        // Извлекаем нужные поля из тела запроса
         String name = (String) requestData.get("name");
         String surname = (String) requestData.get("surname");
         Integer age = (Integer) requestData.get("age");
+
+        // Расчёт удвоенного возраста
         Integer doubledAge = age * 2;
 
-        // Подмена плейсхолдеров в файле на реальные значения
-        String replacedContent = templateContent
+        // Читаем содержимое файла-шаблона
+        byte[] contentBytes = Files.readAllBytes(postTemplateResource.getFile().toPath());
+        String templateContent = new String(contentBytes, StandardCharsets.UTF_8);
+
+        // Производим нужную замену для Person2.age
+        // Сначала удаляем некорректную конструкцию '{age}*2'
+        String modifiedContent = templateContent.replace("\"age\": {age}*2", "\"age\": " + doubledAge);
+
+        // Подменяем оставшиеся места-холдеры ({name}, {surname})
+        modifiedContent = modifiedContent
                 .replace("{name}", name)
                 .replace("{surname}", surname)
-                .replace("{age}", age.toString())
-                .replace("{doubled_age}", doubledAge.toString());
+                .replace("{age}", age.toString());
 
-        return new ResponseEntity<>(replacedContent, HttpStatus.OK);
+        return new ResponseEntity<>(modifiedContent, HttpStatus.OK);
     }
+
 
 }
